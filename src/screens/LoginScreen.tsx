@@ -66,7 +66,7 @@ const LoginScreen:React.FC<LoginScreenProps> = () =>  {
           <Text>Username</Text>
           <TextInput
             style={styles.input}
-            placeholder="Enter your email"
+            placeholder="Enter your username"
             ref={emailRef}
             onChangeText={(value) => handleInput('username', value)}
           />

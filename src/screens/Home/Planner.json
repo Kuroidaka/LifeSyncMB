@@ -1,0 +1,52 @@
+{
+    "task": {
+      "name": "task",
+      "value": "task",
+      "dateZone": [
+        {
+          "name": "today",
+          "value": "Nay"
+        },
+        {
+          "name": "week",
+          "value": "Tuần"
+        },
+        {
+          "name": "all",
+          "value": "Tất cả"
+        }
+      ],
+      "empty": {
+        "img": "src/assets/svg/task.svg",
+        "text1": "Biến sự hỗn loạn thành trật tự.",
+        "text2": "Tập trung năng lượng của bạn vào những điều đúng đắn. Bạn không thể làm mọi thứ ngày hôm nay, nhưng bạn có thể làm được điều gì đó.",
+        "text3": "Bạn có thể thực hiện hành động nào hôm nay để đưa bạn đến gần hơn với mục tiêu của mình?"
+      }
+    },
+    "routine": {
+      "name": "routine",
+      "value": "routine",
+      "dateZone": [
+        {
+          "name": "today",
+          "value": "Nay"
+        },
+        {
+          "name": "all",
+          "value": "Tất cả"
+        }
+      ],
+      "empty": {
+        "img": "src/assets/svg/routine.svg",
+        "text1": "Thực hiện một sự thay đổi thực sự.",
+        "text2": "Hãy thực hiện một hành động nhỏ và nhất quán mỗi ngày và xem bạn có thể tạo ra tác động to lớn như thế nào.",
+        "text3": "Hoạt động nhỏ và hữu ích nào bạn sẽ thực hiện thường xuyên để trở thành người giỏi nhất?"
+      }
+    }
+
+  }
+
+  
+  
+
+  

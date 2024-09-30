@@ -1,0 +1,53 @@
+{
+    "date": [
+        {
+            "name": "Monday",
+            "value": {
+                "en": "Monday",
+                "vn": "Thứ hai"
+            }            
+        },
+        {
+            "name": "Tuesday",
+            "value": {
+                "en": "Tuesday",
+                "vn": "Thứ ba"
+            }
+        },
+        {
+            "name": "Wednesday",
+            "value": {
+                "en": "Wednesday",
+                "vn": "Thứ tư"
+            }
+        },
+        {
+            "name": "Thursday",
+            "value": {
+                "en": "Thursday",
+                "vn": "Thứ năm"
+            }
+        },
+        {
+            "name": "Friday",
+            "value": {
+                "en": "Friday",
+                "vn": "Thứ sáu"
+            }
+        },
+        {
+            "name": "Saturday",
+            "value": {
+                "en": "Saturday",
+                "vn": "Thứ bảy"
+            }
+        },
+        {
+            "name": "Sunday",
+            "value": {
+                "en": "Sunday",
+                "vn": "Chủ nhật"
+            }
+        }
+    ]
+}

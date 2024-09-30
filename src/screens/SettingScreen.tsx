@@ -5,23 +5,19 @@ import authenApi from '../api/auth.api';
 import Loading from '../components/Loading';
 import Toast from 'react-native-toast-message';
 import { AuthContext } from '../context/auth.context';
-import { HomeScreenProps } from './type';
+import { SettingScreenProps } from './type';
 
-const HomeScreen:React.FC<HomeScreenProps> = () =>  {
-  
+const SettingScreen:React.FC<SettingScreenProps> = () =>  {
     const { logOut } = useContext(AuthContext) || {};
     return (
       <View style={styles.container}>
-        <Text>Home</Text>
-        <Button title='Logout' onPress={() => {
-            logOut && logOut()
-        }} />
+        <Text>Setting</Text>
         <Toast />
       </View>
     );
 }
  
-export default HomeScreen;
+export default SettingScreen;
 
 
 const styles = StyleSheet.create({
