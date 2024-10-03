@@ -3,7 +3,7 @@ import { View, Text, Image, Button, StyleSheet, TouchableOpacity } from 'react-n
 import { AnimatePresence, MotiView } from 'moti';
 import plannerData from './Planner.json';
 import { Task } from '../../types/task.type';
-import TaskSection from './TaskSection';
+import TaskSection from './Task/TaskSection';
 // import TaskCard from '../../components/TaskCard';
 // import ModalContext from '../context/ModalContext'; // Assuming you have this context
 

@@ -2,11 +2,11 @@ import React, { useState, useEffect, useContext, useMemo, useRef, Fragment } fro
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Animated } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 // import { TaskContext, ModalContext } from './context'; // Assuming you have context files for Task and Modal
-import language from "../../language.json"
-import { convertDates } from '../../utils';
-import plannerData from './Planner.json';
-import { Task } from '../../types/task.type';
-import { LanguageDateType } from '../../types/language.type';
+import language from "../../../language.json"
+import { convertDates } from '../../../utils';
+import plannerData from '../Planner.json';
+import { Task } from '../../../types/task.type';
+import { LanguageDateType } from '../../../types/language.type';
 import { Card } from './TaskCard';
 // import { toast } from 'react-native-toast-message';
 

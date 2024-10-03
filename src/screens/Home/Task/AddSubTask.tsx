@@ -6,7 +6,9 @@ import {
   StyleSheet,
   Alert,
 } from 'react-native';
-import { Img } from '../../../assets/svg'; // Adjust the import path as necessary
+import { Img } from '../../../../assets/svg'; // Adjust the import path as necessary
+import { Ionicons } from '@expo/vector-icons';
+import Toast from 'react-native-toast-message'
 
 interface AddSubTaskProps {
   id: string | number;
@@ -27,6 +29,13 @@ const AddSubTask: React.FC<AddSubTaskProps> = (props) => {
   };
 
   const saveSubTask = async () => {
+    if (value.trim() === '') {
+      Toast.show({
+        text1: 'Please enter a sub task',
+        type: 'error',
+      });
+      return;
+    }
     try {
       const newData = {
         title: value,
@@ -34,7 +43,11 @@ const AddSubTask: React.FC<AddSubTaskProps> = (props) => {
       AddSub(newData);
       setValue('');
     } catch (error: any) {
-      Alert.alert('Error', error.message);
+      Toast.show({
+        text1: 'Error',
+        text2: error.message,
+        type: 'error',
+      });
     }
   };
 
@@ -57,11 +70,11 @@ const AddSubTask: React.FC<AddSubTaskProps> = (props) => {
     >
       {value === '' ? (
         <TouchableOpacity onPress={focusInput}>
-          <Img.plus />
+          <Ionicons name="add-outline" size={24} color="black" />
         </TouchableOpacity>
       ) : (
         <TouchableOpacity onPress={saveSubTask}>
-          <Img.plusCircle />
+          <Ionicons name="add-circle-outline" size={24} color="black" />
         </TouchableOpacity>
       )}
       <TextInput

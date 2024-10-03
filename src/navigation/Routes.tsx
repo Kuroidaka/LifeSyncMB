@@ -11,10 +11,12 @@ import HomeStack from './HomeStack';
 import { AuthContext } from '../context/auth.context';
 import Sidebar from '../layout/sidebar';
 import { TaskProvider } from '../context/task.context';
+import Modal from '../components/Modal';
+import { SafeAreaView } from 'moti';
+import Toast from 'react-native-toast-message';
 
 export default function Routes() {
   const { userData, isLoad } = useContext(AuthContext) || {};
-  const [initializing, setInitializing] = useState(true);
 
 
   if (isLoad) {
@@ -24,7 +26,7 @@ export default function Routes() {
   const Drawer = createDrawerNavigator();
 
   return (
-    <>
+    <SafeAreaView style={{ flex: 1 }}>
       {userData ?
       <TaskProvider>
           <Drawer.Navigator
@@ -32,11 +34,13 @@ export default function Routes() {
             screenOptions={{ headerShown: true }}
           >
             <Drawer.Screen name="Home" component={HomeStack} />
-          </Drawer.Navigator>  
+          </Drawer.Navigator>
+          <Modal />
       </TaskProvider>
       :
       <AuthStack />
       }
-    </>
+       <Toast />
+    </SafeAreaView>
   );
 }

@@ -6,16 +6,23 @@ import {
   StyleSheet,
   Image,
   Alert,
+  Modal,
 } from 'react-native';
-import { TaskContext, TaskContextProps } from '../../context/task.context';
+import { TaskContext, TaskContextProps } from '../../../context/task.context';
 // import { ModalContext } from '../../context/ModalContext';
 import SubTask from './Subtask';
 import AddSubTask from './AddSubTask';
-import { SubTaskType } from '../../types/task.type';
-import { dateConvert } from '../../utils';
-import { Img } from '../../../assets/svg/index';
+import { SubTaskType } from '../../../types/task.type';
+import { dateConvert } from '../../../utils';
+import { Img } from '../../../../assets/svg/index';
+import { Path, Polyline, Rect, Svg } from 'react-native-svg';
 
-
+import { Ionicons } from '@expo/vector-icons';
+import TaskOptions from './TaskOption';
+import ModalContext from '../../../context/modal.context';
+import Toast from 'react-native-toast-message'
+import reminderApi from '../../../api/reminder.api';
+import { relatedArea } from '../Modal/constants';
 
 
 interface CardProps {
@@ -34,7 +41,7 @@ interface CardProps {
 
 export const Card: React.FC<CardProps> = (props) => {
   const {
-    data:  {
+    data: {
       title,
       color = null,
       deadline = new Date(),
@@ -48,7 +55,7 @@ export const Card: React.FC<CardProps> = (props) => {
   } = props;
 
   const { handleCheckTask, handleDeleteTask } = useContext(TaskContext) as TaskContextProps;
-  // const { openModal } = useContext(ModalContext);
+  const modalContext = useContext(ModalContext);
 
   const [checked, setChecked] = useState<boolean>(status);
   const [subOpen, setSubOpen] = useState<boolean>(false);
@@ -78,7 +85,7 @@ export const Card: React.FC<CardProps> = (props) => {
         note,
         id,
       };
-      // openModal(title, data, 'task', mode);
+      modalContext?.openModal(title, data, 'task', mode);
     },
     check: async (id: string) => {
       if (mode !== 'view') {
@@ -91,29 +98,18 @@ export const Card: React.FC<CardProps> = (props) => {
         setOptionVisible(!optionVisible);
       },
       delete: async (id: string) => {
-        Alert.alert(
-          'Delete Task',
-          'Are you sure you want to delete this task?',
-          [
-            { text: 'Cancel', style: 'cancel' },
-            {
-              text: 'OK',
-              onPress: async () => {
-                handleDeleteTask(id);
-              },
-            },
-          ],
-          { cancelable: true }
-        );
+        console.log("id:", id);
+        handleDeleteTask(id);
       },
     },
   };
 
   const subTaskHandle = {
-    delete: async (subId: string | number) => {
+    delete: async (subId: string) => {
       try {
         let newSub = [...subs];
         // Implement your deleteSubTask API call here
+        await reminderApi.deleteSubTask(subId)
         newSub = newSub.filter((data) => data.id !== subId);
         setSubs(newSub);
       } catch (error: any) {
@@ -123,41 +119,63 @@ export const Card: React.FC<CardProps> = (props) => {
     add: async (data: any) => {
       try {
         // Implement your addSubTask API call here
-        const subData = data; // Replace with API response
+
+        const { data: subData } = await reminderApi.addSubTask(id, data)
+        console.log("subData:", subData);
         const newData = [...subs, subData];
         setSubs(newData);
+
       } catch (error: any) {
         // Handle error
+        Toast.show({
+          text1: 'Error add sub task',
+          type: 'error',
+        });
       }
     },
     open: () => setSubOpen(!subOpen),
     updateSubtask: async (
-      subId: string | number,
+      subId: string,
       updates: Partial<SubTaskType>
     ) => {
       try {
         const newSub = [...subs];
-        // Implement your updateSubTask API call here
+        await reminderApi.updateSubTask(subId, updates);
         const index = newSub.findIndex((e) => e.id === subId);
         if (index !== -1) {
           newSub[index] = { ...newSub[index], ...updates };
           setSubs(newSub);
         }
       } catch (error: any) {
-        // Handle error
+        Toast.show({
+          text1: 'Error update sub task',
+          type: 'error',
+        });
       }
     },
-    check: async (subId: string | number, check: boolean) => {
+    check: async (subId: string, check: boolean) => {
       await subTaskHandle.updateSubtask(subId, { status: check });
     },
-    update: async (subId: string | number, title: string) => {
+    update: async (subId: string, title: string) => {
+      console.log("subId:", subId, "title:", title);
+      const newSub = [...subs]; // Prevent mutating
+    
       await subTaskHandle.updateSubtask(subId, { title });
+      const index = newSub.findIndex(e => e.id === subId);
+      
+      if (index !== -1) {
+          newSub[index] = { ...newSub[index], ...{ title } };
+          setSubs(newSub);
+      }
     },
   };
 
-  const Area: React.FC<{ data: string }> = ({ data }) => {
-    const ImageComponent = Img[data as keyof typeof Img];
-    if (ImageComponent) return <ImageComponent />;
+  const Area: React.FC<{ data: any }> = ({ data }) => {
+
+    const iconName = relatedArea.find(item => item.name === data.area)?.icon;
+    console.log("iconName:", iconName);
+    const ImageComponent = <Ionicons name={iconName as any} size={25} color="black" />;
+    if (ImageComponent) return ImageComponent;
     return null;
   };
 
@@ -165,7 +183,7 @@ export const Card: React.FC<CardProps> = (props) => {
     <View
       style={[
         styles.taskCardContainer,
-        { backgroundColor: color || '#FFFFFF' },
+        { backgroundColor: color || '#fbe0e0' },
       ]}
     >
       <View style={styles.mainTask}>
@@ -177,7 +195,10 @@ export const Card: React.FC<CardProps> = (props) => {
         >
           <View style={styles.titleContainer}>
             <TouchableOpacity onPress={() => taskHandle.check(id as string)}>
-              {checked ? <Img.checkboxChecked /> : <Img.checkbox />}
+              {checked
+                ? <Ionicons name="checkbox-outline" size={32} color="black" />
+                : <Ionicons name="square-outline" size={32} color="black" />}
+
             </TouchableOpacity>
             <Text
               style={[styles.titleText, checked && styles.lineThrough]}
@@ -188,7 +209,9 @@ export const Card: React.FC<CardProps> = (props) => {
           </View>
 
           <View style={styles.deadlineContainer}>
-            <Img.deadline />
+            <Ionicons name="hourglass-outline" size={24} color="black" />
+
+
             <Text style={styles.deadlineText}>{dateConvert(deadline)}</Text>
           </View>
 
@@ -207,7 +230,7 @@ export const Card: React.FC<CardProps> = (props) => {
               ({subDone}/{subs.length})
             </Text>
           )}
-          <Img.subTask />
+          <Ionicons name="list-outline" size={24} color="black" />
         </TouchableOpacity>
 
         <View style={styles.cardOption}>
@@ -216,11 +239,11 @@ export const Card: React.FC<CardProps> = (props) => {
               style={styles.optionBtnCon}
               onPress={taskHandle.option.toggle}
             >
-              <Img.option />
+              <Ionicons name="ellipsis-vertical-outline" size={24} color="black" />
             </TouchableOpacity>
           )}
           <TouchableOpacity onPress={taskHandle.open}>
-            <Img.arrowRight />
+            <Ionicons name="chevron-forward-outline" size={24} color="black" />
           </TouchableOpacity>
         </View>
       </View>
@@ -254,22 +277,10 @@ export const Card: React.FC<CardProps> = (props) => {
         </>
       )}
 
+
       {/* Option Menu */}
       {optionVisible && (
-        <View style={styles.optionContainer}>
-          <TouchableOpacity
-            style={styles.optionItem}
-            onPress={taskHandle.open}
-          >
-            <Text>Edit Task</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.optionItem}
-            onPress={() => taskHandle.option.delete(id as string)}
-          >
-            <Text>Delete Task</Text>
-          </TouchableOpacity>
-        </View>
+        <TaskOptions id={id} taskHandle={taskHandle.option} />
       )}
     </View>
   );
@@ -318,6 +329,7 @@ const styles = StyleSheet.create({
   relateArea: {
     flexDirection: 'row',
     marginTop: 4,
+    gap: 4,
   },
   cardSub: {
     flexDirection: 'row',

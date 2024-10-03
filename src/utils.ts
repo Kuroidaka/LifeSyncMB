@@ -63,3 +63,16 @@ export const dateConvert = (dateMilli: string | Date) => {
     hour12: true      // 12-hour clock
   });
 }
+
+export function convertTimeHHmmToDate(timeString: string) {
+  const [hours, minutes] = timeString.split(':').map(Number);
+  const date = new Date();
+
+  date.setHours(hours);
+  date.setMinutes(minutes);
+  date.setSeconds(0); // Optionally reset seconds to 0
+  date.setMilliseconds(0); // Optionally reset milliseconds to 0
+
+  return date;
+}
+

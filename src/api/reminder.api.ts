@@ -53,7 +53,10 @@ const reminderApi = {
   
     addSubTask: async (id:string, subTaskData:createSubTaskType) => {
       const url = `/reminder/update/${id}/sub`;
-      return axiosClient.post(url, subTaskData);
+      return axiosClient.post(url, {
+        title: subTaskData.title,
+        status: subTaskData.status ? subTaskData.status : false,
+      });
     },
   
     updateSubTask: async (subId:string, subTaskData:updateSubTaskType) => {

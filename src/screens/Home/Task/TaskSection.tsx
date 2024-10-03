@@ -1,10 +1,11 @@
 import React, { useContext, useEffect, useState } from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import Icon from 'react-native-vector-icons/Entypo';
-import plannerData from "./Planner.json";
+import plannerData from "../Planner.json";
 import TaskListWrapper from "./TaskListWrapper";
-import TaskContext, { TaskContextProps } from "../../context/task.context";
-import { Task } from "../../types/task.type";
+import TaskContext, { TaskContextProps } from "../../../context/task.context";
+import { Task } from "../../../types/task.type";
+import ModalContext from "../../../context/modal.context";
 // import { FaPlus } from "react-icons/fa";
 // import ModalContext from '../../Context/Modal.context';
 // import Icon from '../../assets/icon'; // Make sure to adjust Icon import based on React Native usage
@@ -19,7 +20,7 @@ const TaskSection: React.FC<TaskSectionProps> = () => {
   const [taskList, setTaskList] = useState<Task[]>([]);
   const { task, loading } = useContext(TaskContext) as TaskContextProps;
 
-  //   const { openModal } = useContext(ModalContext);
+    const modalContext = useContext(ModalContext);
 
   const handleSelectDateZone = (name: string) => {
     // console.log(plannerData[data], name);
@@ -28,7 +29,7 @@ const TaskSection: React.FC<TaskSectionProps> = () => {
 
   const handleClickAdd = (name: string) => {
     console.log("name", name);
-    // openModal(name, null, name, 'add');
+    modalContext?.openModal(name, null, name, 'add');
   };
 
   useEffect(() => {

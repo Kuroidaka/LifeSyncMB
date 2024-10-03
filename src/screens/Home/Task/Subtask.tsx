@@ -6,16 +6,17 @@ import {
   StyleSheet,
   TextInput,
 } from 'react-native';
-import { Img } from '../../../assets/svg';
+import { Img } from '../../../../assets/svg';
+import { Ionicons } from '@expo/vector-icons';
 
 interface SubTaskProps {
   color: string | null;
   title: string;
   done: boolean;
-  updateSubCheck: (id: string | number, checked: boolean) => void;
-  updateSubTitle: (id: string | number, value: string) => void;
-  id: string | number;
-  deleteSubTask: (id: string | number) => void;
+  updateSubCheck: (id: string, checked: boolean) => void;
+  updateSubTitle: (id: string, value: string) => void;
+  id: string;
+  deleteSubTask: (id: string) => void;
   mode: 'edit' | 'view';
 }
 
@@ -50,9 +51,9 @@ const SubTask: React.FC<SubTaskProps> = (props) => {
     setEdit(true);
   };
 
-  const closeEdit = async () => {
+  const closeEdit = () => {
     setEdit(false);
-    await updateSubTitle(id, value);
+    updateSubTitle(id, value);
   };
 
   const handleInput = (text: string) => {
@@ -80,7 +81,10 @@ const SubTask: React.FC<SubTaskProps> = (props) => {
           onPress={handleCheck}
           style={checked ? styles.blur : null}
         >
-          {checked ? <Img.checkboxChecked /> : <Img.checkbox />}
+          {checked
+            ? <Ionicons name="checkbox-outline" size={32} color="black" />
+            : <Ionicons name="square-outline" size={32} color="black" />
+            }
         </TouchableOpacity>
         <View style={[styles.title, 
             // checked ? styles.lineThrough : null
@@ -114,11 +118,11 @@ const SubTask: React.FC<SubTaskProps> = (props) => {
         <View style={styles.option}>
           {!edit && (
             <TouchableOpacity onPress={openEdit}>
-              <Img.edit />
+              <Ionicons name="create-outline" size={32} color="black" />
             </TouchableOpacity>
           )}
           <TouchableOpacity onPress={handleDel}>
-            <Img.deleteIcon />
+            <Ionicons name="trash-outline" size={32} color="black" />
           </TouchableOpacity>
         </View>
       )}

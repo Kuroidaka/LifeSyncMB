@@ -1,16 +1,19 @@
-import React, { createContext, useCallback, useEffect, useState, ReactNode } from 'react';
+import React, { createContext, useCallback, useEffect, useState, ReactNode, useContext } from 'react';
 import reminderApi from '../api/reminder.api';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { isObject } from '../utils';
 import { createTaskType, Task, updateTaskType } from '../types/task.type';
+import { AxiosResponse } from '../types/index.type';
+import Toast from 'react-native-toast-message';
+import ModalContext, { ModalContextType } from './modal.context';
 
 
 export interface TaskContextProps {
   task: Task[];
   setTask: React.Dispatch<React.SetStateAction<Task[]>>;
-  handleAddTask: (data: createTaskType) => void;
+  handleAddTask: (data: createTaskType) => Promise<AxiosResponse<Task> | undefined>;
   handleDeleteTask: (id: string) => void;
-  handleUpdateTask: (taskId: string, data?: updateTaskType) => void;
+  handleUpdateTask: (taskId: string, data?: updateTaskType) => Promise<AxiosResponse<Task> | undefined>;
   handleCheckTask: (taskId: string) => void;
   loading: boolean;
 }
@@ -24,6 +27,7 @@ export const TaskContext = createContext<TaskContextProps | undefined>(undefined
 export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
   const [task, setTask] = useState<Task[]>([]);
   const queryClient = useQueryClient();
+  const modalContext = useContext<ModalContextType | undefined>(ModalContext);
 
   const { data: taskData, isLoading } = useQuery({
     queryKey: ['tasks'],
@@ -48,11 +52,16 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
 
   const updateMutation = useMutation({
     mutationFn: async ({ taskId, data }: { taskId: string; data: updateTaskType }) => {
-      await reminderApi.updateTask(taskId, data);
+      return await reminderApi.updateTask(taskId, data);
     },
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['tasks'] }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['tasks'] });
+      modalContext?.setIsDataLoaded(true);
+    },
     onError: (error: any) => {
       console.error('Something went wrong', error);
+      modalContext?.setIsDataLoaded(true);
+      return error;
     },
   });
 
@@ -75,25 +84,37 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
   }, [deleteMutation]);
 
   const handleAddTask = useCallback(
-    (data: createTaskType) => {
+    async (data: createTaskType) => {
       if (typeof data.deadline === 'undefined') {
         const today = new Date();
         today.setHours(23, 59, 59, 0);
         data.deadline = today;
       }
-
-      addMutation.mutate({ data });
+      try {
+        const result = await addMutation.mutateAsync({ data });
+        return result;
+      } catch (error) {
+        console.error('Something went wrong', error);
+        throw error;
+      }
     },
     [addMutation]
   );
 
   const handleUpdateTask = useCallback(
-    (taskId: string, data: updateTaskType = {}) => {
+    async (taskId: string, data: updateTaskType = {}): Promise<AxiosResponse<Task> | undefined> => {
       if (Array.isArray(data.area) && isObject(data.area[0])) {
         data.area = data.area.map((item: any) => item.area);
       }
-
-      updateMutation.mutate({ taskId, data });
+      try {
+        modalContext?.setIsDataLoaded(false);
+        const result = await updateMutation.mutateAsync({ taskId, data });
+        return result;
+        return undefined;
+      } catch (error) {
+        console.error('Something went wrong', error);
+        throw error;
+      }
     },
     [updateMutation]
   );

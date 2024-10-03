@@ -3,11 +3,11 @@ import { View, Text, Image, StyleSheet } from 'react-native';
 // import { ModalContext } from '../../Context/Modal.context';
 import TaskSection from './TaskSection'; // Assuming TaskSection is already converted to React Native
 // import TaskCard from './TaskCard';
-import plannerData from './Planner.json';
-import { PlannerData, Task } from '../../types/task.type';
-import Button from '../../components/Button';
+import plannerData from '../Planner.json';
+import { PlannerData, Task } from '../../../types/task.type';
+import Button from '../../../components/Button';
 import TaskCardList from './TaskList';
-import TaskContext, { TaskContextProps } from '../../context/task.context';
+import TaskContext, { TaskContextProps } from '../../../context/task.context';
 
 interface TaskListProps {
   data: Task[];
