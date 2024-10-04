@@ -3,10 +3,10 @@ import { View, Text, TouchableOpacity, Animated, StyleSheet, Dimensions } from '
 
 const { width } = Dimensions.get('window');
 
-export default function TabBar({tab, setTab}: {tab: string, setTab: React.Dispatch<React.SetStateAction<string>>}) {
+export default function TabBar({tab, setTab}: {tab: 'task' | 'routine', setTab: React.Dispatch<React.SetStateAction<'task' | 'routine'>>}) {
   const [activeTab, setActiveTab] = useState(0);
 
-  const handleTabPress = (index: number, name: string) => {
+  const handleTabPress = (index: number, name: 'task' | 'routine') => {
     setActiveTab(index);
     setTab(name);
   };

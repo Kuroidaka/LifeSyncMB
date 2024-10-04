@@ -7,6 +7,9 @@ import Loading from "./Loading";
 // import RelateMemoModal from "../Page/Chat/RelateMemoModal";
 import ModalContext, { ModalContextType } from "../context/modal.context";
 import TaskModal from "../screens/Home/Modal";
+import { TaskProvider } from "../context/task.context";
+import { RoutineProvider } from "../context/routine.context";
+import { ScrollView } from "moti";
 
 interface ModalStyle {
     open: any
@@ -62,7 +65,7 @@ const Modal: React.FC = () => {
         if (!modalContext) return;
         const { modal } = modalContext;
         if (modal.type && ["task", "goal", "routine"].includes(modal.type)) {
-              return <TaskModal />;
+            return <TaskModal />;
         }
         // if (modal.type === "tool") {
         //   return <ToolsDataModal />;
@@ -82,14 +85,20 @@ const Modal: React.FC = () => {
             >
                 <View style={styles.title}>
                     <Text style={styles.titleText}>{modalContext?.modal.title || "Hello"}</Text>
-                        <TouchableOpacity onPress={hdleToggle}>
-                            <Text>X</Text>
-                        </TouchableOpacity>
-                    </View>
-                    {modalContext?.isDataLoaded ? renderModalContent() : 
-                    <View style={styles.loadingWrapper}>
-                        <Loading />
-                    </View>}
+                    <TouchableOpacity onPress={hdleToggle}>
+                        <Text>X</Text>
+                    </TouchableOpacity>
+                </View>
+                <ScrollView style={styles.modalContent}>
+                    <TaskProvider>
+                        <RoutineProvider>
+                        {modalContext?.isDataLoaded ? renderModalContent() :
+                            <View style={styles.loadingWrapper}>
+                                <Loading />
+                            </View>}
+                        </RoutineProvider>
+                    </TaskProvider>
+                </ScrollView>
             </Animated.View>
         </RNModal>
     );
@@ -126,5 +135,8 @@ const styles = StyleSheet.create({
         left: 0,
         right: 0,
         bottom: 0,
+    },
+    modalContent:{
+
     }
 });

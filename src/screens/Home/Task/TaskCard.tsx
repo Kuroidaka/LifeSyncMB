@@ -173,7 +173,6 @@ export const Card: React.FC<CardProps> = (props) => {
   const Area: React.FC<{ data: any }> = ({ data }) => {
 
     const iconName = relatedArea.find(item => item.name === data.area)?.icon;
-    console.log("iconName:", iconName);
     const ImageComponent = <Ionicons name={iconName as any} size={25} color="black" />;
     if (ImageComponent) return ImageComponent;
     return null;
@@ -210,8 +209,6 @@ export const Card: React.FC<CardProps> = (props) => {
 
           <View style={styles.deadlineContainer}>
             <Ionicons name="hourglass-outline" size={24} color="black" />
-
-
             <Text style={styles.deadlineText}>{dateConvert(deadline)}</Text>
           </View>
 

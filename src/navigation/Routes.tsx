@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from 'react';
+import React, { useContext, useState, useEffect, Fragment } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 // import auth from '@react-native-firebase/auth';
@@ -14,6 +14,7 @@ import { TaskProvider } from '../context/task.context';
 import Modal from '../components/Modal';
 import { SafeAreaView } from 'moti';
 import Toast from 'react-native-toast-message';
+import { RoutineProvider } from '../context/routine.context';
 
 export default function Routes() {
   const { userData, isLoad } = useContext(AuthContext) || {};
@@ -28,7 +29,7 @@ export default function Routes() {
   return (
     <SafeAreaView style={{ flex: 1 }}>
       {userData ?
-      <TaskProvider>
+      <Fragment>
           <Drawer.Navigator
             drawerContent={(props) => <Sidebar {...props} />}
             screenOptions={{ headerShown: true }}
@@ -36,7 +37,7 @@ export default function Routes() {
             <Drawer.Screen name="Home" component={HomeStack} />
           </Drawer.Navigator>
           <Modal />
-      </TaskProvider>
+      </Fragment>
       :
       <AuthStack />
       }

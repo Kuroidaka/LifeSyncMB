@@ -1,22 +1,26 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { View, Text, Image, StyleSheet } from 'react-native';
 // import { ModalContext } from '../../Context/Modal.context';
-import TaskSection from './TaskSection'; // Assuming TaskSection is already converted to React Native
 // import TaskCard from './TaskCard';
-import plannerData from '../Planner.json';
-import { PlannerData, Task } from '../../../types/task.type';
-import Button from '../../../components/Button';
-import TaskCardList from './TaskList';
-import TaskContext, { TaskContextProps } from '../../../context/task.context';
+import plannerData from './Planner.json';
+import { Task } from '../../types/task.type';
+import Button from '../../components/Button';
+import TaskCardList from './Task/TaskList';
+import TaskContext, { TaskContextProps } from '../../context/task.context';
+import { PlannerData } from '../../types/index.type';
+import { Routine } from '../../types/routine.type';
+import RoutineCardList from './Routine/RoutineList';
+import { ScrollView } from 'moti';
 
-interface TaskListProps {
-  data: Task[];
+interface ReminderListProps {
+  data: Task[] | Routine[];
   dateZone: string;
   setDateZone: (zone: string) => void;
+  tab: 'task' | 'routine';
+  setDateSection: React.Dispatch<React.SetStateAction<Routine[]>> | null;
 }
 
-const TaskListWrapper: React.FC<TaskListProps> = ({ data, dateZone, setDateZone }) => {
-  const tab = 'task';
+const ReminderListWrapper: React.FC<ReminderListProps> = ({ data, dateZone, setDateZone, tab, setDateSection }) => {
   //   const { openModal } = useContext(ModalContext);
 
 
@@ -24,14 +28,25 @@ const TaskListWrapper: React.FC<TaskListProps> = ({ data, dateZone, setDateZone 
     // openModal(name, null, name, 'add');
   };
 
-
+  const renderData = (data: Task[] | Routine[]) => {
+    if (tab === 'task') {
+      return <TaskCardList dataSection={data as Task[]} dateZone={dateZone} setDateZone={setDateZone} />
+    } else {
+      return <RoutineCardList 
+        dataSection={data as Routine[]} 
+        setDateSection={setDateSection as React.Dispatch<React.SetStateAction<Routine[]>>} 
+        dateZone={dateZone} 
+        setDateZone={setDateZone} 
+      />
+    }
+  }
 
   const planner: PlannerData = plannerData;
 
   return (
     <View style={styles.container}>
       {data && data.length > 0 ? (
-        <TaskCardList dataSection={data} dateZone={dateZone} setDateZone={setDateZone} />
+        renderData(data)
       ) : (
         <View style={styles.motivationContainer}>
           <ImgMotivation>
@@ -52,7 +67,7 @@ const TaskListWrapper: React.FC<TaskListProps> = ({ data, dateZone, setDateZone 
   );
 };
 
-export default TaskListWrapper;
+export default ReminderListWrapper;
 
 // ImgMotivation and TextMotivation components:
 
@@ -69,7 +84,7 @@ const TextMotivation: React.FC<{ children: React.ReactNode }> = ({ children }) =
 const styles = StyleSheet.create({
   container: {
     width: '100%',
-    height: '100%',
+    height: '100%'
   },
   motivationContainer: {
     gap: 15

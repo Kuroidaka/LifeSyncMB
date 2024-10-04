@@ -110,7 +110,7 @@ const TaskCardList: React.FC<TaskCardListProps> = ({ dataSection, dateZone, setD
         setupDate();
     }, [dataSection]);
 
-    const TodayDZ = () => (
+    const TodayDZ: React.FC  = () => (
         <Fragment>
             {dateType.overdue.length > 0 && (
                 <Fragment>
@@ -183,13 +183,13 @@ const TaskCardList: React.FC<TaskCardListProps> = ({ dataSection, dateZone, setD
     );
 
     return (
-        <ScrollView contentContainerStyle={styles.container}>
+        <View style={styles.container}>
             {dateZone === 'today' ? (
                 <TodayDZ />
             ) : dateZone === 'week' ? (
                 <WeekDZ />
             ) : dateZone === 'all' && <AllDZ />}
-        </ScrollView>
+        </View>
     );
 };
 

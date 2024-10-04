@@ -1,8 +1,8 @@
 import React, { useContext, useEffect, useState, useRef } from "react";
 import { View, Text, TextInput, ScrollView, Button, TouchableOpacity, SafeAreaView, StyleSheet, StatusBar } from "react-native";
 import ModalContext from "../../../context/modal.context";
-import TaskContext from "../../../context/task.context";
-import { dateConvert } from "../../../utils";
+import RoutineContext from "../../../context/routine.context";
+import { dateConvert, formatTimeHHmm } from "../../../utils";
 import { colorList, relatedArea } from "./constants";
 // import VideoChatPreview from "../../Chat/Box/VideoPreview";
 import Toast from 'react-native-toast-message';
@@ -10,26 +10,26 @@ import Toast from 'react-native-toast-message';
 import { API_BASE_URL, PREFIX } from '../../../constant/BaseURl';
 import { Ionicons } from '@expo/vector-icons';
 import ColorPicker, { Panel1, Swatches, Preview, OpacitySlider, HueSlider, returnedResults } from 'reanimated-color-picker';
-import DateTimePicker from 'react-native-ui-datepicker';
-import QuillEditor, { QuillToolbar } from 'react-native-cn-quill';
+import DateTimePicker, { DateType } from 'react-native-ui-datepicker';
+import DateTimePickerModal from "react-native-modal-datetime-picker";
 
 
 
 // Types
-type TaskProps = {
+type RoutineProps = {
   dataInput: any;
   setDataInput: React.Dispatch<React.SetStateAction<any>>;
   mode: string;
   areaData: any;
 };
 
-const Task: React.FC<TaskProps> = ({ dataInput, setDataInput, mode, areaData }) => {
+const Routine: React.FC<RoutineProps> = ({ dataInput, setDataInput, mode, areaData }) => {
   const modalContext = useContext(ModalContext);
-  const taskContext = useContext(TaskContext);
+  const routineContext = useContext(RoutineContext);
   const [valid, setValid] = useState(true);
   const [hex, setHex] = useState(dataInput.color);
   const [area, setArea] = useState(areaData);
-  const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
+  const [isTimePickerVisible, setTimePickerVisibility] = useState(false);
   const [secOpen, setSecOpen] = useState({
     color: true,
     area: true,
@@ -37,9 +37,6 @@ const Task: React.FC<TaskProps> = ({ dataInput, setDataInput, mode, areaData }) 
     deadline: true,
     attachment: true,
   });
-
-  const _editor = useRef<QuillEditor>(null);
-
 
   useEffect(() => {
     areaData && setArea(areaData);
@@ -69,16 +66,23 @@ const Task: React.FC<TaskProps> = ({ dataInput, setDataInput, mode, areaData }) 
   const handleSave = async () => {
     const isValid = checkValid();
     if (isValid) {
-      console.log(dataInput);
+      const newData = {...dataInput};
+      if(!newData.routineTime){
+        newData.routineTime = new Date();
+      }
+      newData.routineTime = formatTimeHHmm(newData.routineTime);
+
+
+      console.log(newData);
       try {
         if (mode === "edit") {
-          const taskId = modalContext?.modal.content.id;
-          const res = await taskContext?.handleUpdateTask(taskId, dataInput);
+          const routineId = modalContext?.modal.content.id;
+          const res = await routineContext?.handleUpdateRoutine(routineId, newData);
           if (res) {
             modalContext?.closeModal();
           }
         } else {
-          const res = await taskContext?.handleAddTask(dataInput);
+          const res = await routineContext?.handleAddRoutine(newData);
           if (res) {
             modalContext?.closeModal();
           }
@@ -105,9 +109,27 @@ const Task: React.FC<TaskProps> = ({ dataInput, setDataInput, mode, areaData }) 
     setDataInput({ ...dataInput, color: color.hex });
   };
 
+
+  const handleChooseDateRoutine = (date: { dates: DateType[]; datePressed: DateType; change: "added" | "removed"; }) => {
+    console.log(date);
+    if(mode === "view") return null
+    const dates = date.dates.map((data: DateType) => ({ completion_date: data}))
+    console.log(dates);
+    setDataInput({...dataInput, routineDate: dates })
+}
+
+  const timePicker = {
+    open: () => {
+      setTimePickerVisibility(true);
+    },
+    close: () => {
+      setTimePickerVisibility(false);
+    }
+  }
+
   const handleDateConfirm = (date: Date) => {
-    setDataInput({ ...dataInput, deadline: date.toString() });
-    setDatePickerVisibility(false);
+    setDataInput({ ...dataInput, routineTime: date });
+    timePicker.close();
   };
   const checkChoseArea = (area: string) => {
     return dataInput.area.some((item: any) => item === area)
@@ -152,23 +174,28 @@ const Task: React.FC<TaskProps> = ({ dataInput, setDataInput, mode, areaData }) 
         </View>
       </Section>
 
-      {/* DEADLINE */}
-      <Section title="Deadline">
-        <TouchableOpacity onPress={() => setDatePickerVisibility(true)}>
-          <Text>{dataInput.deadline ? dateConvert(dataInput.deadline) : "Select Deadline"}</Text>
-        </TouchableOpacity>
-        {/* <DateTimePickerModal
-          isVisible={isDatePickerVisible}
-          mode="date"
+      <Section title="Routine Time" editAble={true} onClickEdit={timePicker.open}>
+        <DateTimePickerModal
+          isVisible={isTimePickerVisible}
+          date={dataInput.routineTime}
+          mode="time"
           onConfirm={handleDateConfirm}
-          onCancel={() => setDatePickerVisibility(false)}
-        /> */}
+          onCancel={timePicker.close}
+        />
+
+        <Text style={{ fontSize: 20, fontWeight: "bold" }}>{formatTimeHHmm(dataInput.routineTime || new Date())}</Text>
+
+      </Section>
+
+      {/* DEADLINE */}
+      <Section title="Complete Date" visible={mode === "edit" ? true : false} >
         <DateTimePicker
-          mode="single"
-          date={dataInput.deadline}
-          onChange={(params) => setDataInput({ ...dataInput, deadline: params.date })}
+          mode="multiple"
+          dates={dataInput.routineDate.map((data: any) => data.completion_date)}
+          onChange={(params) => handleChooseDateRoutine(params)}
           timePicker={true}
         />
+
       </Section>
 
       {/* NOTE */}
@@ -183,17 +210,6 @@ const Task: React.FC<TaskProps> = ({ dataInput, setDataInput, mode, areaData }) 
         />
       </Section>
 
-      {/* ATTACHMENT */}
-      <Section title="Attachments">
-        <></>
-        {/* {dataInput.taskAttachment?.map((item: any) => (
-          <VideoChatPreview
-            key={item.id}
-            videoSrc={`${API_BASE_URL}${PREFIX}file/stream/${item.name}?type=video`}
-            name={item.name}
-          />
-        ))} */}
-      </Section>
 
       {/* SAVE BUTTON */}
       <Button title="Save" onPress={handleSave} />
@@ -204,13 +220,21 @@ const Task: React.FC<TaskProps> = ({ dataInput, setDataInput, mode, areaData }) 
 interface SectionProps {
   title: string;
   children: React.ReactNode;
+  editAble?: boolean;
+  onClickEdit?: () => void;
+  visible?: boolean;
 }
 
 const Section: React.FC<SectionProps> = (p) => {
-  const { title, children } = p;
+  const { title, children, editAble = false, onClickEdit, visible = true } = p;
+
+  if (!visible) return null;
   return (
     <View style={styles.section}>
-      <Text style={styles.sectionTitle}>{title}</Text>
+      <View style={{ flexDirection: "row", justifyContent: "center", alignItems: "center", gap: 10, marginBottom: 10 }}>
+        <Text style={styles.sectionTitle}>{title}</Text>
+        {editAble && <Ionicons name="create-outline" size={24} color="black" onPress={onClickEdit} />}
+      </View>
       <View style={styles.sectionContent}>
         {children}
       </View>
@@ -218,17 +242,20 @@ const Section: React.FC<SectionProps> = (p) => {
   );
 };
 
-export default Task;
+export default Routine;
 
 
 const styles = StyleSheet.create({
   section: {
     marginBottom: 20,
+    borderBottomWidth: .5,
+    borderRadius: 10,
+    borderColor: "#cfcfcf",
+    padding: 10,
   },
   sectionTitle: {
     fontSize: 20,
     fontWeight: "bold",
-    marginBottom: 10,
     justifyContent: "center",
     display: "flex",
     alignItems: "center",

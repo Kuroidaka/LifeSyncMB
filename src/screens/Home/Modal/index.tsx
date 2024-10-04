@@ -5,6 +5,8 @@ import Task from "./Task";
 // import Goal from "./Goal";
 import { convertTimeHHmmToDate } from "../../../utils";
 import { View, Text } from "react-native"; // Import necessary components
+import Routine from "./Routine";
+
 
 type AreaData = {
     health: boolean;
@@ -65,9 +67,9 @@ const TaskModal: React.FC = () => {
         };
 
         if (modalContext && modalContext.modal.content !== null) {
-            const content = modalContext.modal.content; 
+            const content = modalContext.modal.content;
             const areaContent = content?.area.reduce((prev: any, next: { area: keyof AreaData }) => {
-                return [ ...prev, next.area ];
+                return [...prev, next.area];
             }, []);
             setDataInput({
                 title: content?.title || "",
@@ -131,9 +133,10 @@ const TaskContent: React.FC<TaskContentProps> = ({ mode, dataInput, setDataInput
 
     return (
         <Fragment>
-            {type === "task" ? (
-                <Task dataInput={dataInput} setDataInput={setDataInput} mode={mode || "view"} areaData={areaData} />
-            ) : null}
+            {type === "task"
+                ? <Task dataInput={dataInput} setDataInput={setDataInput} mode={mode || "view"} areaData={areaData} />
+                : <Routine dataInput={dataInput} setDataInput={setDataInput} mode={mode || "view"} areaData={areaData} />
+            }
             {/* // : modal.type === "routine" ? (
             //     <Routine dataInput={dataInput} setDataInput={setDataInput} mode={mode} areaData={areaData} />
             // ) : modal.type === "goal" ? (

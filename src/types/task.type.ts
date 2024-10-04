@@ -40,12 +40,3 @@ export type updateSubTaskType = {
 };
 
 
-export interface PlannerData {
-  [key: string]: {
-    name: string;
-    value: string;
-    dateZone: { name: string; value: string; }[];
-    empty: { img: string; text1: string; text2: string; text3: string; };
-  };
-}
-

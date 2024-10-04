@@ -16,37 +16,18 @@ import { AuthContext } from "../../context/auth.context";
 import { HomeScreenProps } from "../type";
 import ReminderSection from "./reminderSection";
 import TabBar from "./TabBar";
-import TaskContext from "../../context/task.context";
+import TaskContext, { TaskProvider } from "../../context/task.context";
+import { RoutineProvider } from "../../context/routine.context";
 
 const HomeScreen: React.FC<HomeScreenProps> = () => {
-  const { logOut } = useContext(AuthContext) || {};
-  // const { task }= useContext(TaskContext) || {};
-
-  const [tab, setTab] = useState("task")
-    
-  const selectTab = (e: any) => {
-    const name = e.target.getAttribute("name")
-    setTab(name)
-  }
-
-  // useEffect(()=> {
-  //   console.log("task", task)
-  // }, [task])
+  const [tab, setTab] = useState<"task" | "routine">("task")
 
   return (
+
     <View style={styles.container}>
       <TabBar tab={tab} setTab={setTab} />
 
       <ReminderSection tab={tab} />
-
-      {/* <Text>Home</Text>
-      <Button
-        title="Logout"
-        onPress={() => {
-          logOut && logOut();
-        }}
-      />
-      <Toast /> */}
     </View>
   );
 };
