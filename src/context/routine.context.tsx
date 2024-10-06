@@ -86,7 +86,6 @@ export const RoutineProvider: React.FC<RoutineProviderProps> = ({ children }) =>
   const handleUpdateRoutine = async (routineId: string, data: updateRoutineType = {}) => {
     try{
       const res = await updateMutation.mutateAsync({ routineId, data });
-      console.log("routine updaed", res)
       return res;
     }catch(error){
       Toast.show({

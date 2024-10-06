@@ -132,3 +132,11 @@ export const isSameDate = (date1: Date, date2: Date) => (
   date1.getMonth() === date2.getMonth() &&
   date1.getDate() === date2.getDate()
 );
+
+export const convertToFileObject = (fileUri: string, fileName: string, mimeType: string) => {
+  return {
+    uri: fileUri, // The local URI of the file
+    name: fileName, // The file name
+    type: mimeType, // The MIME type (e.g., 'image/jpeg')
+  };
+};

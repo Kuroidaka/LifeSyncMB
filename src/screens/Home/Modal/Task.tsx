@@ -38,7 +38,6 @@ const Task: React.FC<TaskProps> = ({ dataInput, setDataInput, mode, areaData }) 
     attachment: true,
   });
 
-  const _editor = useRef<QuillEditor>(null);
 
 
   useEffect(() => {

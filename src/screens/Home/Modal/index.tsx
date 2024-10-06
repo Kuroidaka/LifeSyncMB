@@ -4,7 +4,7 @@ import Task from "./Task";
 // import Routine from "./Routine";
 // import Goal from "./Goal";
 import { convertTimeHHmmToDate } from "../../../utils";
-import { View, Text } from "react-native"; // Import necessary components
+import { View, Text, ScrollView, StyleSheet } from "react-native"; // Import necessary components
 import Routine from "./Routine";
 
 
@@ -132,7 +132,7 @@ type TaskContentProps = {
 const TaskContent: React.FC<TaskContentProps> = ({ mode, dataInput, setDataInput, areaData, type }) => {
 
     return (
-        <Fragment>
+        <ScrollView contentContainerStyle={styles.container}>
             {type === "task"
                 ? <Task dataInput={dataInput} setDataInput={setDataInput} mode={mode || "view"} areaData={areaData} />
                 : <Routine dataInput={dataInput} setDataInput={setDataInput} mode={mode || "view"} areaData={areaData} />
@@ -144,8 +144,16 @@ const TaskContent: React.FC<TaskContentProps> = ({ mode, dataInput, setDataInput
             // ) : modal.type === "tool" ? (
             //     <Text>Tool Component</Text>
             // ) : null} */}
-        </Fragment>
+        </ScrollView>
     );
 };
 
 export default TaskModal;
+
+const styles = StyleSheet.create({
+    container: {
+        padding: 20,
+        position: "relative",
+        paddingBottom: 100,
+    },
+});

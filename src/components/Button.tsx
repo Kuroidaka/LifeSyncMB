@@ -8,9 +8,10 @@ type ButtonProps = {
     onClick?: (event: GestureResponderEvent) => void;
     style?: any;
     name?: string;
+    Icon?: any;
 };
 
-const Button: React.FC<ButtonProps> = ({ title = '', onClick = () => { }, style = {}, name = '' }) => {
+const Button: React.FC<ButtonProps> = ({ title = '', onClick = () => { }, style = {}, name = '', Icon = null }) => {
     const scaleValue = new Animated.Value(1); // Create animated value for scaling
 
     // Handle button press
@@ -44,7 +45,8 @@ const Button: React.FC<ButtonProps> = ({ title = '', onClick = () => { }, style 
                     style={styles.button} // Applied to TouchableOpacity only
                     accessibilityLabel={name}
                 >
-                    <Text style={styles.buttonText}>{title}</Text>
+                    {Icon && <Icon />}
+                    {title !== "" && <Text style={styles.buttonText}>{title}</Text>}
                 </TouchableOpacity>
             </Animated.View>
         </View>
@@ -59,8 +61,12 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     button: {
-        width: 300,
-        height: 30,
+        maxWidth: 300,
+        maxHeight: 50,
+        paddingTop: 10,
+        paddingBottom: 10,
+        paddingLeft: 5,
+        paddingRight: 5,
         borderRadius: 10,
         alignItems: 'center',
         backgroundColor: 'black',
@@ -69,6 +75,9 @@ const styles = StyleSheet.create({
     buttonText: {
         color: 'white',
         fontSize: 18,
+    },
+    icon: {
+        color: 'white',
     },
     touchable: {
         borderRadius: 10, // Ensure the touchable area respects the button's borderRadius

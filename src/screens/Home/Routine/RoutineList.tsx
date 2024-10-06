@@ -55,7 +55,7 @@ const RoutineCardList: React.FC<RoutineCardListProps> = ({ dataSection, setDateS
         setupDate();
       }, [dataSection]);
     
-      const TodayDZ: React.FC = () => (
+      const TodayDZ = () => (
         <Fragment>
           {dateType.mustdo.length > 0 && (
             <Fragment>
@@ -76,9 +76,8 @@ const RoutineCardList: React.FC<RoutineCardListProps> = ({ dataSection, setDateS
         </Fragment>
       );
     
-      const AllDZ: React.FC = () => (
+      const AllDZ = () => (
         <Fragment>
-          {TodayDZ()}
           <DateZoneLabel title="Không cần phải làm" num={dateType?.doNotNeed?.length ?? 0}/>
           <View style={styles.routineCardList}>
             {dateType.doNotNeed.map((data) => (
@@ -91,6 +90,7 @@ const RoutineCardList: React.FC<RoutineCardListProps> = ({ dataSection, setDateS
               />
             ))}
           </View>
+          {TodayDZ()}
         </Fragment>
       );
     

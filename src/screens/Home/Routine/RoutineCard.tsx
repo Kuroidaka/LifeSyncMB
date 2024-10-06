@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import ModalContext from '../../../context/modal.context';
 import RoutineContext from '../../../context/routine.context';
 import { Routine } from '../../../types/routine.type';
@@ -45,6 +45,19 @@ const Card: React.FC<RoutineCardProps> = ({ data, mode = 'edit', dataSection, se
       },
       toggle: () => {
         setOption(!option);
+      },
+      deleteConfirm: (id: string) => {
+        Alert.alert(
+          "Delete Routine",
+          "Are you sure you want to delete this routine?",
+          [
+            {
+              text: "Cancel",
+              style: "cancel"
+            },
+            { text: "OK", onPress: () => taskHandle.option.delete(id) }
+          ]
+        );
       },
       delete: (id: string) => {
         setTimeout(() => {
@@ -152,8 +165,8 @@ const Card: React.FC<RoutineCardProps> = ({ data, mode = 'edit', dataSection, se
 
         <View style={styles.cardOption}>
           {mode !== 'view' && (
-            <TouchableOpacity onPress={taskHandle.option.toggle}>
-              <Ionicons name="ellipsis-vertical-outline" size={24} color="black" />
+            <TouchableOpacity onPress={() => taskHandle.option.deleteConfirm(id)}>
+              <Ionicons name="trash-outline" size={24} color="black" />
             </TouchableOpacity>
           )}
           <TouchableOpacity onPress={taskHandle.open}>

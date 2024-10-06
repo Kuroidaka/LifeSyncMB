@@ -1,5 +1,5 @@
-import React, { useContext, useEffect, useState, useRef } from "react";
-import { View, Text, TextInput, ScrollView, Button, TouchableOpacity, SafeAreaView, StyleSheet, StatusBar } from "react-native";
+import React, { useContext, useEffect, useState, useRef, Fragment } from "react";
+import { View, Text, TextInput, ScrollView, Button, TouchableOpacity, SafeAreaView, StyleSheet, StatusBar, Switch } from "react-native";
 import ModalContext from "../../../context/modal.context";
 import RoutineContext from "../../../context/routine.context";
 import { dateConvert, formatTimeHHmm } from "../../../utils";
@@ -66,8 +66,8 @@ const Routine: React.FC<RoutineProps> = ({ dataInput, setDataInput, mode, areaDa
   const handleSave = async () => {
     const isValid = checkValid();
     if (isValid) {
-      const newData = {...dataInput};
-      if(!newData.routineTime){
+      const newData = { ...dataInput };
+      if (!newData.routineTime) {
         newData.routineTime = new Date();
       }
       newData.routineTime = formatTimeHHmm(newData.routineTime);
@@ -112,11 +112,11 @@ const Routine: React.FC<RoutineProps> = ({ dataInput, setDataInput, mode, areaDa
 
   const handleChooseDateRoutine = (date: { dates: DateType[]; datePressed: DateType; change: "added" | "removed"; }) => {
     console.log(date);
-    if(mode === "view") return null
-    const dates = date.dates.map((data: DateType) => ({ completion_date: data}))
+    if (mode === "view") return null
+    const dates = date.dates.map((data: DateType) => ({ completion_date: data }))
     console.log(dates);
-    setDataInput({...dataInput, routineDate: dates })
-}
+    setDataInput({ ...dataInput, routineDate: dates })
+  }
 
   const timePicker = {
     open: () => {
@@ -174,6 +174,17 @@ const Routine: React.FC<RoutineProps> = ({ dataInput, setDataInput, mode, areaDa
         </View>
       </Section>
 
+      {/* Status */}
+      <Section title="Status" visible={mode === "edit" ? true : false}>
+        <Switch
+          value={dataInput.isActive}
+          onValueChange={(value) => setDataInput({ ...dataInput, isActive: value })}
+        />
+        {dataInput.isActive ? <Text style={{ color: "green" }}>Active</Text> : <Text style={{ color: "red" }}>Inactive</Text>}
+      </Section>
+
+
+      {/* ROUTINE TIME */}
       <Section title="Routine Time" editAble={true} onClickEdit={timePicker.open}>
         <DateTimePickerModal
           isVisible={isTimePickerVisible}
@@ -182,9 +193,7 @@ const Routine: React.FC<RoutineProps> = ({ dataInput, setDataInput, mode, areaDa
           onConfirm={handleDateConfirm}
           onCancel={timePicker.close}
         />
-
         <Text style={{ fontSize: 20, fontWeight: "bold" }}>{formatTimeHHmm(dataInput.routineTime || new Date())}</Text>
-
       </Section>
 
       {/* DEADLINE */}
@@ -246,6 +255,7 @@ export default Routine;
 
 
 const styles = StyleSheet.create({
+
   section: {
     marginBottom: 20,
     borderBottomWidth: .5,

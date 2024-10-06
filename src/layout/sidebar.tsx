@@ -11,15 +11,18 @@ import {
 import { DrawerContentComponentProps } from "@react-navigation/drawer";
 import { FaTasks } from "react-icons/fa";
 import { AiTwotoneSetting } from "react-icons/ai";
+import { Ionicons } from '@expo/vector-icons';
+import { useRoute } from "@react-navigation/native";
 
 const menuItems = [
-  { name: "Planner", label: "Planner", icon: <FaTasks />, link: "Planner" },
-  { name: "Settings", label: "Cài đặt", icon: <AiTwotoneSetting />, link: "Setting" }, // Example additional route
+  { name: "Planner", label: "Planner", icon: (props: any) => <Ionicons name="calendar-outline" size={30} color={props.isActive ? "white" : "black"} {...props} />, link: "Planner" },
+  { name: "Chat", label: "Chat", icon: (props: any) => <Ionicons name="chatbubble-outline" size={30} color={props.isActive ? "white" : "black"} {...props} />, link: "Chat" }, 
+  { name: "Settings", label: "Cài đặt", icon: (props: any) => <Ionicons name="settings-outline" size={30} color={props.isActive ? "white" : "black"} {...props} />, link: "Setting" }, 
 ];
 
 const Sidebar: React.FC<DrawerContentComponentProps> = ({ navigation }) => {
-
-  const [select, setSelect] = useState<string>("");
+  // const route = useRoute();
+  const [select, setSelect] = useState<string>("Planner");
 
   const handleSelect = (link: string) => {
     setSelect(link);
@@ -31,6 +34,12 @@ const Sidebar: React.FC<DrawerContentComponentProps> = ({ navigation }) => {
   const renderIcon = (icon: React.ReactNode) => {
     return <View style={styles.iconWrapper}>{icon}</View>;
   };
+
+  // useEffect(() => {
+  //   if(route) {
+  //     console.log(route)
+  //   }
+  // }, [route]);
 
   return (
     <>
@@ -45,9 +54,12 @@ const Sidebar: React.FC<DrawerContentComponentProps> = ({ navigation }) => {
             style={[styles.menuItem, select === menuItem.link && styles.active]}
           >
             <View style={styles.iconWrapper}>
-              {/* {renderIcon(menuItem.icon)} */}
+              {menuItem.icon({isActive: select === menuItem.link})}
             </View>
-            <Text style={styles.menuText}>{menuItem.label}</Text>
+            <Text style={[
+              styles.menuText,
+              select === menuItem.link && styles.activeText
+            ]}>{menuItem.label}</Text>
           </TouchableOpacity>
         ))}
       </View>
@@ -79,8 +91,11 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
   active: {
-    backgroundColor: "#e91e63",
+    backgroundColor: "linear-gradient(118deg,rgba(30,30,30,1),rgba(30,30,30,.7))",
     borderRadius: 10,
+  },
+  activeText: {
+    color: "white",
   },
   iconWrapper: {
     width: 29,

@@ -97,6 +97,19 @@ export const Card: React.FC<CardProps> = (props) => {
       toggle: () => {
         setOptionVisible(!optionVisible);
       },
+      deleteConfirm: (id: string) => {
+        Alert.alert(
+          "Delete Task",
+          "Are you sure you want to delete this Task?",
+          [
+            {
+              text: "Cancel",
+              style: "cancel"
+            },
+            { text: "OK", onPress: () => taskHandle.option.delete(id) }
+          ]
+        );
+      },
       delete: async (id: string) => {
         console.log("id:", id);
         handleDeleteTask(id);
@@ -234,9 +247,9 @@ export const Card: React.FC<CardProps> = (props) => {
           {mode !== 'view' && (
             <TouchableOpacity
               style={styles.optionBtnCon}
-              onPress={taskHandle.option.toggle}
+              onPress={() => taskHandle.option.deleteConfirm(id)}
             >
-              <Ionicons name="ellipsis-vertical-outline" size={24} color="black" />
+              <Ionicons name="trash-outline" size={24} color="black" />
             </TouchableOpacity>
           )}
           <TouchableOpacity onPress={taskHandle.open}>

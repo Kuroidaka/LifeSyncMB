@@ -6,14 +6,17 @@ import { AuthProvider } from "../context/auth.context";
 import { NavigationContainer } from "@react-navigation/native";
 import { TaskProvider } from "../context/task.context";
 import { ModalProvider } from "../context/modal.context";
+import { AppearanceProvider } from "../context/appearance.context";
 
 export default function Providers() {
   return (
     <NavigationContainer>
       <AuthProvider>
-        <ModalProvider>
-          <Routes />
-        </ModalProvider>
+        <AppearanceProvider>
+          <ModalProvider>
+            <Routes />
+          </ModalProvider>
+        </AppearanceProvider>
       </AuthProvider>
     </NavigationContainer>
   );
