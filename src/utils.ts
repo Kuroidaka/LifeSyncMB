@@ -140,3 +140,16 @@ export const convertToFileObject = (fileUri: string, fileName: string, mimeType:
     type: mimeType, // The MIME type (e.g., 'image/jpeg')
   };
 };
+
+export const filesToBase64 = (files: File[]) => {
+  return Promise.all(
+    files.map((file) => {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = (error) => reject(error);
+        reader.readAsDataURL(file);
+      });
+    })
+  );
+}

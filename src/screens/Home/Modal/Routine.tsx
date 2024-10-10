@@ -221,7 +221,7 @@ const Routine: React.FC<RoutineProps> = ({ dataInput, setDataInput, mode, areaDa
 
 
       {/* SAVE BUTTON */}
-      <Button title="Save" onPress={handleSave} />
+      {mode !== "view" && <Button title="Save" onPress={handleSave} />}
     </View>
   );
 };

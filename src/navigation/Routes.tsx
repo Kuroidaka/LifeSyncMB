@@ -6,13 +6,19 @@ import HomeStack from './HomeStack';
 import { AuthContext } from '../context/auth.context';
 import Sidebar from '../layout/sidebar';
 import Modal from '../components/Modal';
-import { SafeAreaView } from 'moti';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import Toast from 'react-native-toast-message';
 import Background from '../components/Background';
-import AppearanceContext from '../context/appearance.context';
+import AppearanceContext, { AppearanceProvider } from '../context/appearance.context';
+import { ModalProvider } from '../context/modal.context';
+import { WebSocketProvider } from '../context/socket.context';
+import { Text, TouchableOpacity, View } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { Header } from '@react-navigation/stack'
+import HeaderStack from './Header/HeaderStack';
 
 
-export default function Routes() {
+export default function Routes({ navigation }: { navigation: any }) {
   const { userData, isLoad } = useContext(AuthContext) || {};
 
   if (isLoad) {
@@ -24,15 +30,22 @@ export default function Routes() {
   return (
     <SafeAreaView style={{ flex: 1 }}>
       {userData ? (
-        <Fragment>
-          <Drawer.Navigator
-            drawerContent={(props) => <Sidebar {...props} />}
-            screenOptions={{ headerShown: true }}
-          >
-            <Drawer.Screen name=" " component={HomeStack} />
-          </Drawer.Navigator>
-          <Modal />
-        </Fragment>
+        <WebSocketProvider>
+          <AppearanceProvider>
+            <ModalProvider>
+              <Drawer.Navigator
+                drawerContent={(props) => <Sidebar {...props} />}
+                screenOptions={{
+                  headerShown: true,
+                  header: (props) => <HeaderStack {...props} />
+                }}
+              >
+                <Drawer.Screen name=" " component={HomeStack} />
+              </Drawer.Navigator>
+              <Modal />
+            </ModalProvider>
+          </AppearanceProvider>
+        </WebSocketProvider>
       ) : (
         <AuthStack />
       )}

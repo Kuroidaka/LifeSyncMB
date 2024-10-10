@@ -54,7 +54,7 @@ export const Card: React.FC<CardProps> = (props) => {
     mode = 'edit',
   } = props;
 
-  const { handleCheckTask, handleDeleteTask } = useContext(TaskContext) as TaskContextProps;
+  const taskContext = useContext(TaskContext) as TaskContextProps;
   const modalContext = useContext(ModalContext);
 
   const [checked, setChecked] = useState<boolean>(status);
@@ -89,7 +89,7 @@ export const Card: React.FC<CardProps> = (props) => {
     },
     check: async (id: string) => {
       if (mode !== 'view') {
-        handleCheckTask(id);
+        taskContext?.handleCheckTask(id);
         setChecked(!checked);
       }
     },
@@ -112,7 +112,7 @@ export const Card: React.FC<CardProps> = (props) => {
       },
       delete: async (id: string) => {
         console.log("id:", id);
-        handleDeleteTask(id);
+        taskContext?.handleDeleteTask(id);
       },
     },
   };
@@ -299,10 +299,12 @@ export const Card: React.FC<CardProps> = (props) => {
 const styles = StyleSheet.create({
   taskCardContainer: {
     width: '100%',
-    borderRadius: 16,
     marginBottom: 10,
     paddingVertical: 14,
     paddingHorizontal: 20,
+    borderWidth: 1,
+    borderColor: '#797979',
+    borderRadius: 20,
   },
   mainTask: {
     flexDirection: 'row',

@@ -19,7 +19,7 @@ interface RoutineCardProps {
 }
 
 
-const Card: React.FC<RoutineCardProps> = ({ data, mode = 'edit', dataSection, setDateSection, isCompleted = false }) => {
+export const Card: React.FC<RoutineCardProps> = ({ data, mode = 'edit', dataSection, setDateSection, isCompleted = false }) => {
   const { title, color = null, area = [], note = "", id, routineDate, isActive, routineTime } = data;
   const modalContext = useContext(ModalContext);
   const routineContext = useContext(RoutineContext);
@@ -178,12 +178,10 @@ const Card: React.FC<RoutineCardProps> = ({ data, mode = 'edit', dataSection, se
   );
 };
 
-export default Card;
 const styles = StyleSheet.create({
   taskCardContainer: {
     maxWidth: '90%',
     width: '100%',
-    borderRadius: 16,
     marginBottom: 10,
     padding: 16,
     shadowColor: '#000',
@@ -191,6 +189,9 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     shadowOffset: { width: 0, height: 2 },
     elevation: 3,
+    borderWidth: 1,
+    borderColor: '#797979',
+    borderRadius: 20,
   },
   mainTask: {
     display: 'flex',

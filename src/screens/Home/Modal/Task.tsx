@@ -195,7 +195,7 @@ const Task: React.FC<TaskProps> = ({ dataInput, setDataInput, mode, areaData }) 
       </Section>
 
       {/* SAVE BUTTON */}
-      <Button title="Save" onPress={handleSave} />
+      {mode !== "view" && <Button title="Save" onPress={handleSave} />}
     </View>
   );
 };

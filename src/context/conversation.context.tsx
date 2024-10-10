@@ -7,7 +7,7 @@ import React, {
     useState,
 } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { WebSocketProvider } from './socket.context';
+import { WebSocketContext, WebSocketProvider } from './socket.context';
 import conversationApi from '../api/conversation.api';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { ToastAndroid } from 'react-native';
@@ -27,12 +27,13 @@ interface CacheConversation {
 }
 
 interface ConversationContextProps {
-    conversationList: ConversationModify[];
+    conversationList: ConversationModify[] | null;
     error: unknown;
     currenConError: unknown;
     isLoading: boolean;
     currentConLoading: boolean;
     selectedConID: string | undefined;
+    setSelectedConID: (id: string) => void;
     deleteConversation: (id: string) => void;
     addMsg: (data: { prompt: string }, isStream?: boolean, isVision?: boolean) => void;
     currentCon: ConversationModify | null;
@@ -42,16 +43,14 @@ interface ConversationContextProps {
 const ConversationContext = createContext<ConversationContextProps | undefined>(undefined);
 
 export const ConversationProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-    const [conversation, setConversation] = useState<ConversationModify[]>([]);
+    const [conversation, setConversation] = useState<ConversationModify[] | null>(null);
     const [currentCon, setCurrentConversation] = useState<ConversationModify | null>(null);
     const listFuncData = useRef<any[]>([]);
     const listMemoData = useRef<any[]>([]);
     const listMemoStorage = useRef<any[]>([]);
-    const WebSocketContext = createContext<any>(null);
-    const socket = useContext(WebSocketContext);
+    const socketContext = useContext(WebSocketContext);
     const navigation = useNavigation();
-    const route = useRoute();
-    const routeParams = route.params as { id: string | undefined };
+    const [selectedConID, setSelectedConID] = useState<string | undefined>(undefined);
     const queryClient = useQueryClient();
 
     const { data: conversationList, error, isLoading } = useQuery({
@@ -64,8 +63,8 @@ export const ConversationProvider: React.FC<{ children: React.ReactNode }> = ({ 
         isLoading: currentConLoading,
         error: currenConError,
     } = useQuery({
-        queryKey: ['conversation', routeParams?.id],
-        queryFn: () => (routeParams?.id ? conversationApi.getConversationHistory(routeParams.id) : null),
+        queryKey: ['conversation', selectedConID],
+        queryFn: () => (selectedConID ? conversationApi.getConversationHistory(selectedConID) : null),
     });
 
     const updateFuncDataList = (list: any[], newData: any) => {
@@ -82,27 +81,36 @@ export const ConversationProvider: React.FC<{ children: React.ReactNode }> = ({ 
         const data = conversationList?.data;
         if (data && data.length > 0) {
             setConversation(data);
+        } else {
+            setConversation([]);
         }
         listFuncData.current = [];
         listMemoData.current = [];
         listMemoStorage.current = [];
+
     }, [conversationList]);
 
     useEffect(() => {
-        if (!routeParams?.id) {
+        if (!selectedConID) {
             setCurrentConversation(null);
         } else if (currentConData) {
             setCurrentConversation(currentConData.data);
         }
-    }, [routeParams?.id, currentConData]);
+        
+
+        return () => {
+            setCurrentConversation(null);
+        }
+    }, [selectedConID, currentConData]);
 
     useEffect(() => {
-        if (socket) {
-            socket.on('chatResChunk', ({ content }: { content: string }) => {
+        if (socketContext?.socket) {
+            socketContext?.socket.on('chatResChunk', ({ content }: { content: string }) => {
+                console.log('chatResChunk', content);
                 cacheConversation.addMsg({ prompt: content }, true);
             });
 
-            socket.on('chatResChunkFunc', async ({ functionData, id }: { functionData: any; id: string }) => {
+            socketContext?.socket.on('chatResChunkFunc', async ({ functionData, id }: { functionData: any; id: string }) => {
                 const data = { id, ...functionData };
                 listFuncData.current = updateFuncDataList(listFuncData.current, data);
                 const params = { prompt: '' };
@@ -110,7 +118,7 @@ export const ConversationProvider: React.FC<{ children: React.ReactNode }> = ({ 
                 await cacheConversation.addMsg(params, isBot, listFuncData.current);
             });
 
-            socket.on('chatResMemo', async ({ active, memoryDetail = [] }: { active: boolean; memoryDetail: any[] }) => {
+            socketContext?.socket.on('chatResMemo', async ({ active, memoryDetail = [] }: { active: boolean; memoryDetail: any[] }) => {
                 if (active) {
                     listMemoData.current = memoryDetail;
                     const params = { prompt: '' };
@@ -119,7 +127,7 @@ export const ConversationProvider: React.FC<{ children: React.ReactNode }> = ({ 
                 }
             });
 
-            socket.on('chatResMemoStorage', async ({
+            socketContext?.socket.on('chatResMemoStorage', async ({
                 active,
                 memoryDetail = [],
             }: {
@@ -136,19 +144,21 @@ export const ConversationProvider: React.FC<{ children: React.ReactNode }> = ({ 
         }
 
         return () => {
-            if (socket) {
-                socket.off('chatResChunk');
-                socket.off('chatResChunkFunc');
-                socket.off('chatResMemo');
-                socket.off('chatResMemoStorage');
+            if (socketContext?.socket) {
+                socketContext?.socket.off('chatResChunk');
+                socketContext?.socket.off('chatResChunkFunc');
+                socketContext?.socket.off('chatResMemo');
+                socketContext?.socket.off('chatResMemoStorage');
             }
         };
-    }, [socket]);
+    }, [socketContext?.socket]);
 
     const cacheConversation: CacheConversation = {
         del: async (id: string) => {
-            const newCon = conversation.filter((data) => data.id !== id);
-            setConversation(newCon);
+            if(conversation?.length) {
+                const newCon = conversation.filter((data) => data.id !== id);
+                setConversation(newCon);
+            }
         },
         addMsg: async (params, isBot = false, functionData = [], dataMemo = [], memoStorage = []) => {
             const updateBotMessages = (prevMessages: any[]) => {
@@ -180,7 +190,7 @@ export const ConversationProvider: React.FC<{ children: React.ReactNode }> = ({ 
                 return newMessages;
             };
 
-            const isNewConversation = !routeParams?.id || routeParams?.id === '-1';
+            const isNewConversation = !selectedConID || selectedConID === '-1';
             if (isNewConversation) {
                 if (isBot) {
                     setCurrentConversation((prev: ConversationModify | null) => {
@@ -209,9 +219,10 @@ export const ConversationProvider: React.FC<{ children: React.ReactNode }> = ({ 
                     };
                 });
             } else {
-                const index = conversation.findIndex((data) => data.id === routeParams?.id);
-                if (index !== -1) {
-                    const newConversations = [...conversation];
+                if(conversation?.length) {
+                    const index = conversation.findIndex((data) => data.id === selectedConID);
+                    if (index !== -1) {
+                        const newConversations = [...conversation];
                     newConversations[index] = {
                         ...newConversations[index],
                         messages: [
@@ -222,6 +233,7 @@ export const ConversationProvider: React.FC<{ children: React.ReactNode }> = ({ 
 
                     setConversation(newConversations);
                     setCurrentConversation(newConversations[index]);
+                    }
                 }
             }
         },
@@ -247,7 +259,7 @@ export const ConversationProvider: React.FC<{ children: React.ReactNode }> = ({ 
 
             if (!isVision) {
                 const con = await conversationApi.createChat(data, isStream);
-                if (!routeParams?.id) {
+                if (!selectedConID) {
                     setTimeout(() => {
                         // navigation.navigate('Chat', { id: con.conversationID });
                     }, 1500);
@@ -257,10 +269,10 @@ export const ConversationProvider: React.FC<{ children: React.ReactNode }> = ({ 
             }
         },
         onSuccess: () => {
-            if (!routeParams?.id) {
+            if (!selectedConID) {
                 queryClient.invalidateQueries({ queryKey: ['conversations'] });
             } else {
-                queryClient.invalidateQueries({ queryKey: ['conversations', routeParams?.id] });
+                queryClient.invalidateQueries({ queryKey: ['conversations', selectedConID] });
             }
         },
         onError: (error) => {
@@ -286,7 +298,7 @@ export const ConversationProvider: React.FC<{ children: React.ReactNode }> = ({ 
         currenConError,
         isLoading,
         currentConLoading,
-        selectedConID: routeParams?.id,
+        selectedConID, setSelectedConID,
         deleteConversation,
         addMsg,
         currentCon,

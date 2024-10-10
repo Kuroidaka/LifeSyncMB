@@ -21,7 +21,6 @@ const menuItems = [
 ];
 
 const Sidebar: React.FC<DrawerContentComponentProps> = ({ navigation }) => {
-  // const route = useRoute();
   const [select, setSelect] = useState<string>("Planner");
 
   const handleSelect = (link: string) => {

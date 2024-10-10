@@ -8,7 +8,7 @@ import { convertDates, isSameDate } from '../../../utils';
 import plannerData from '../Planner.json';
 import { Task } from '../../../types/task.type';
 import { LanguageDateType } from '../../../types/language.type';
-import Card from './RoutineCard';
+import { Card } from './RoutineCard';
 import { Routine } from '../../../types/routine.type';
 // import { toast } from 'react-native-toast-message';
 
