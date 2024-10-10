@@ -59,14 +59,11 @@ const ChatBox: React.FC<ChatBoxProps> = ({ conversationId }) => {
     setIsUserScrolling(!isAtBottom);
   };
 
-  if (!messages) {
-    return <OverlayDimLoading />;
-  }
 
   return (
     <View style={styles.conversationContainer}>
       {/* <OverlayDimLoading />; */}
-      {messages.length > 0 ? (
+      {messages && messages.length > 0 && (
         <FlatList
           ref={flatListRef}
           data={messages}
@@ -82,9 +79,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({ conversationId }) => {
           scrollEventThrottle={16}
           onLayout={() => flatListRef.current?.scrollToEnd({ animated: true })}
         />
-      ) : (
-        <Text>No messages yet</Text>
-      )}
+      ) }
     </View>
   );
 };

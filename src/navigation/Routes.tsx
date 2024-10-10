@@ -18,7 +18,7 @@ import { Header } from '@react-navigation/stack'
 import HeaderStack from './Header/HeaderStack';
 
 
-export default function Routes({ navigation }: { navigation: any }) {
+export default function Routes() {
   const { userData, isLoad } = useContext(AuthContext) || {};
 
   if (isLoad) {

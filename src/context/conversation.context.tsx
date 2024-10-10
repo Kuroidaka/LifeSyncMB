@@ -13,6 +13,8 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import { ToastAndroid } from 'react-native';
 import Routes from '../navigation/Routes';
 import { Conversation, ConversationModify } from '../types/conversation.type';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../screens/type';
 
 
 interface CacheConversation {
@@ -49,7 +51,7 @@ export const ConversationProvider: React.FC<{ children: React.ReactNode }> = ({ 
     const listMemoData = useRef<any[]>([]);
     const listMemoStorage = useRef<any[]>([]);
     const socketContext = useContext(WebSocketContext);
-    const navigation = useNavigation();
+    const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList, 'ChatID'>>();
     const [selectedConID, setSelectedConID] = useState<string | undefined>(undefined);
     const queryClient = useQueryClient();
 
@@ -261,7 +263,7 @@ export const ConversationProvider: React.FC<{ children: React.ReactNode }> = ({ 
                 const con = await conversationApi.createChat(data, isStream);
                 if (!selectedConID) {
                     setTimeout(() => {
-                        // navigation.navigate('Chat', { id: con.conversationID });
+                        navigation.navigate('ChatID', { conversationId: con.data.conversationID });
                     }, 1500);
                 }
 

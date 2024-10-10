@@ -25,16 +25,16 @@ interface ChatScreenInnerProps {
 
 const ChatScreenInner: React.FC<ChatScreenInnerProps> = ({ conversationId = "" }) => {
   const conversationContext = useContext(ConversationContext)
-  // const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList, 'ChatID'>>();
-  // if(!conversationContext || !conversationContext.conversationList) {
-  //   return <OverlayDimLoading />
-  // }
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList, 'ChatID'>>();
+  if(!conversationContext || !conversationContext.conversationList) {
+    return <OverlayDimLoading />
+  }
 
   return (
     <View style={styles.container}>
-      <Text>Hello world {conversationId}</Text>
-      {/* <ChatBox conversationId={conversationId} />
-      <InputBox navigation={navigation} /> */}
+
+      <ChatBox conversationId={conversationId} />
+      <InputBox navigation={navigation} />
     </View>
   );
 };

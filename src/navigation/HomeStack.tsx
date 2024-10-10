@@ -30,7 +30,7 @@ export default function HomeStack({ navigation }: { navigation: NativeStackNavig
          options={({ route }) => ({
           headerShown: true,
           headerTransparent: false,
-          headerLeft: () => <ChatHeader />,
+          headerLeft: () => <ChatHeader navigation={navigation}/>,
           headerStyle: { backgroundColor: 'transparent' },
           headerTitle: '',
         })}

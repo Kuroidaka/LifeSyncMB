@@ -45,12 +45,21 @@ export interface Messages {
     userID: string;
     conversationId: string;
     relatedMemo: string;
-    memoStorage: MemoStorageType[];
-    functionData: FunctionAgentType[];
-    videoRecord: VideoRecord;
+    memoStorage?: MemoStorageType[];
+    functionData?: FunctionAgentType[];
+    videoRecord?: VideoRecord;
     createdAt: string;
     updatedAt: string;
     [key: string]: any;
+}
+
+export interface MessagesModify {
+    id: string;
+    text: string;
+    isBot?: boolean;
+    userID?: string;
+    conversationId?: string;
+    relatedMemo?: string;
 }
 
 export interface FunctionAgentType {

@@ -1,9 +1,18 @@
 import { StyleSheet, View, Text, Dimensions } from "react-native";
+import { Ionicons } from '@expo/vector-icons';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../../screens/type';
 
-const ChatHeader = () => {
+const ChatHeader = ({navigation}: {navigation: NativeStackNavigationProp<RootStackParamList>}) => {
+
+    const handleCreateChat = () => {
+        navigation.navigate('ChatID', {
+            conversationId: '',
+        });
+    }
     return (
         <View style={styles.container}>
-            <Text>ChatHeader</Text>
+            <Ionicons name="create-outline" size={30} color="black" onPress={handleCreateChat} />
         </View>
     );
 }
@@ -13,7 +22,9 @@ export default ChatHeader;
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: 'red',
         width: Dimensions.get('window').width,
+        justifyContent: 'center',
+        alignItems: 'center',
+        display: 'flex',
     }
 });
