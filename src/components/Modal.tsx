@@ -11,6 +11,8 @@ import { TaskProvider } from "../context/task.context";
 import { RoutineProvider } from "../context/routine.context";
 import { ScrollView } from "moti";
 import { Ionicons } from '@expo/vector-icons';
+import ToolsDataModal from "../screens/ChatScreen/Modal/ToolsDataModal";
+import RelateMemoModal from "../screens/ChatScreen/Modal/RelateMemoModal";
 
 interface ModalStyle {
     open: any
@@ -19,23 +21,6 @@ interface ModalStyle {
 
 const Modal: React.FC = () => {
     const modalContext = useContext<ModalContextType | undefined>(ModalContext);
-
-    // useEffect(() => {
-    //     console.log("listen event opening modal");
-    //     const openingModal = () => {
-    //         setTimeout(() => {
-    //             modalContext?.setIsDataLoaded(true);
-    //         }, 500);
-    //     };
-
-    //     window.addEventListener("modalOpening", openingModal);
-    //     window.addEventListener("modalClosing", () => { });
-
-    //     return () => {
-    //         window.removeEventListener("modalOpening", openingModal);
-    //     };
-    // }, []);
-
     const modalStyle: ModalStyle = {
         open: {
             width: "100%",
@@ -68,12 +53,12 @@ const Modal: React.FC = () => {
         if (modal.type && ["task", "goal", "routine"].includes(modal.type)) {
             return <TaskModal />;
         }
-        // if (modal.type === "tool") {
-        //   return <ToolsDataModal />;
-        // }
-        // if (modal.type === "memo") {
-        //   return <RelateMemoModal />;
-        // }
+        if (modal.type === "tool") {
+          return <ToolsDataModal />;
+        }
+        if (modal.type === "memo") {
+          return <RelateMemoModal />;
+        }
     };
 
     return (

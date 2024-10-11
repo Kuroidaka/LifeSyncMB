@@ -24,10 +24,10 @@ export const AppearanceProvider: React.FC<AppearanceProviderProps> = ({ children
       try {
         if (authContext?.userData?.id) {
           const backgroundImage = await userApi.getBackgroundImg();
-          if (backgroundImage) {
+          if (backgroundImage.data) {
             setAppearance({
-              name: backgroundImage.name.split('.')[0],
-              urlPath: `${API_BASE_URL}${PREFIX}${backgroundImage.urlPath}`,
+              name: backgroundImage.data.name.split('.')[0],
+              urlPath: `${API_BASE_URL}${PREFIX}${backgroundImage.data.urlPath}`,
             });
           }
         }

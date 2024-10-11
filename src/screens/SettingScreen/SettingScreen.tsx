@@ -10,6 +10,7 @@ import { SettingScreenProps } from '../type';
 import { Ionicons } from '@expo/vector-icons';
 import Appearance from './Appearance';
 import Toast from 'react-native-toast-message';
+import AISetting from './AiSetting';
 
 
 
@@ -28,7 +29,7 @@ const dataItem = [
     icon: (props: any) => (<Ionicons name="code-outline" size={30} color="black" {...props} />),
     name: 'ai',
     title: 'AI Setting',
-    component: <Text>2</Text>,
+    component: <AISetting/>,
   },
 ];
 

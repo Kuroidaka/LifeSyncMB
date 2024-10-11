@@ -47,7 +47,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           return null;
         });
 
-        if (!user) {
+        if (!user?.data) {
           logOut();
           return;
         }
@@ -59,7 +59,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           console.log('No linked Gmail account or Google token verification failed:', error);
         }
 
-        const finalUser = { ...user, ...googleUser };
+        const finalUser = { ...user?.data, ...googleUser?.data };
         setUserData(finalUser);
         const refreshedToken = await getToken();
         if(refreshedToken) setStoredToken(refreshedToken);

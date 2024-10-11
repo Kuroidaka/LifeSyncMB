@@ -1,7 +1,7 @@
 import React, { createContext, useState } from "react";
 import Loading from "../components/Loading";
 
-const ModalContext = createContext<ModalContextType | undefined>(undefined);
+export const ModalContext = createContext<ModalContextType | undefined>(undefined);
 
 export interface ModalContextType {
     modal: ModalState,

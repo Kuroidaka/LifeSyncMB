@@ -7,6 +7,7 @@ export type RootStackParamList = {
   Setting: { screen: string };
   Chat: { conversationId: string };
   ChatID: { conversationId?: string };
+  VideoCall: { conversationId?: string };
 };
 // Type alias for HomeScreen Props
 export type HomeScreenProps = NativeStackScreenProps<RootStackParamList, 'Home'>;
@@ -16,3 +17,4 @@ export type LoginScreenProps = NativeStackScreenProps<RootStackParamList, 'Auth'
 export type SettingScreenProps = NativeStackScreenProps<RootStackParamList, 'Setting'>;
 export type ChatListScreenProps = NativeStackScreenProps<RootStackParamList, 'Chat'>;
 export type ChatScreenProps = NativeStackScreenProps<RootStackParamList, 'ChatID'>;
+export type VideoCallScreenProps = NativeStackScreenProps<RootStackParamList, 'VideoCall'>;

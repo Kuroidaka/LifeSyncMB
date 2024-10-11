@@ -299,6 +299,7 @@ const styles = StyleSheet.create({
     chatContent: {
         marginLeft: 18,
         maxWidth: '85%',
+        minWidth: '70%',
     },
     chatPerson: {
         fontSize: 16,

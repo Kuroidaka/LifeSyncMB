@@ -10,6 +10,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { RootStackParamList } from '../screens/type';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import ChatHeader from './Header/ChatHeader';
+import VideoCallScreen from '../screens/VideoCall/VideoCallScreen';
 
 const Stack = createStackNavigator();
 
@@ -48,7 +49,8 @@ export default function HomeStack({ navigation }: { navigation: NativeStackNavig
             headerRight: () => {
               const { conversationId } = route.params as { conversationId: string };
               const handleCall = () => {
-                Alert.alert('Initiating Call', `Calling for conversation ID: ${conversationId}`);
+                // Alert.alert('Initiating Call', `Calling for conversation ID: ${conversationId}`);
+                navigation.navigate('VideoCall', { conversationId });
                 // Add your call logic here (e.g., API call or navigation to call screen)
               };
 
@@ -60,6 +62,9 @@ export default function HomeStack({ navigation }: { navigation: NativeStackNavig
             },
           })}
         />
+
+        {/* Stack for video Call */}
+        <Stack.Screen name='VideoCall' component={VideoCallScreen as any} />
       </Stack.Group>
     </Stack.Navigator>
   );
