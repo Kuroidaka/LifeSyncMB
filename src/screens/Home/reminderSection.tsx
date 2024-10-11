@@ -10,6 +10,7 @@ import RoutineContext, { RoutineContextProps, RoutineProvider } from '../../cont
 import { Routine } from '../../types/routine.type';
 import { Ionicons } from '@expo/vector-icons';
 import ReminderListWrapper from './ReminderListWrapper';
+import OverlayDimLoading from '../../components/OverlayDimLoading';
 // import TaskCard from '../../components/TaskCard';
 // import ModalContext from '../context/ModalContext'; // Assuming you have this context
 
@@ -74,8 +75,11 @@ const ReminderSectionInner: React.FC<ReminderSectionProps> = ({ tab }) => {
     }
   }, [contextData]);
 
+  
+
   return (
     <View style={styles.task}>
+    {contextData && 'isLoadAction' in contextData && contextData.isLoadAction && <OverlayDimLoading />}
       <View style={styles.title_wrap}>
         <Text style={styles.title}>
           {plannerData[tab].value}

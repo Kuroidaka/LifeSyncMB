@@ -20,6 +20,7 @@
     "axios": "^1.7.7",
     "expo": "~51.0.28",
     "expo-av": "~14.0.7",
+    "expo-camera": "~15.0.16",
     "expo-document-picker": "~12.0.2",
     "expo-file-system": "~17.0.1",
     "expo-status-bar": "~1.12.1",
@@ -49,6 +50,7 @@
     "react-native-vector-icons": "^10.2.0",
     "react-native-video": "^6.6.4",
     "react-native-web": "~0.19.10",
+    "react-native-webview": "13.8.6",
     "reanimated-color-picker": "^3.0.4",
     "socket.io-client": "^4.8.0"
   },

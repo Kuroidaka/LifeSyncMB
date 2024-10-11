@@ -6,6 +6,7 @@ import { createTaskType, Task, updateTaskType } from '../types/task.type';
 import { AxiosResponse } from '../types/index.type';
 import Toast from 'react-native-toast-message';
 import ModalContext, { ModalContextType } from './modal.context';
+import { useFocusEffect } from '@react-navigation/native';
 
 
 export interface TaskContextProps {
@@ -16,6 +17,7 @@ export interface TaskContextProps {
   handleUpdateTask: (taskId: string, data?: updateTaskType) => Promise<AxiosResponse<Task> | undefined>;
   handleCheckTask: (taskId: string) => void;
   loading: boolean;
+  isLoadAction: boolean;
 }
 
 interface TaskProviderProps {
@@ -28,17 +30,25 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
   const [task, setTask] = useState<Task[]>([]);
   const queryClient = useQueryClient();
   const modalContext = useContext<ModalContextType | undefined>(ModalContext);
+  const [isLoadAction, setIsLoadAction] = useState(false);
 
-  const { data: taskData, isLoading } = useQuery({
+  const { data: taskData, isLoading, refetch } = useQuery({
     queryKey: ['tasks'],
     queryFn: () => reminderApi.getTasks(),
   });
 
   const addMutation = useMutation({
-    mutationFn: async ({ data }: { data: createTaskType }) => await reminderApi.createTask(data),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['tasks'] }),
+    mutationFn: async ({ data }: { data: createTaskType }) => {
+      setIsLoadAction(true);
+      return await reminderApi.createTask(data)
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['tasks'] });
+      setIsLoadAction(false);
+    },
     onError: (error: any) => {
       console.error('Something went wrong', error);
+      setIsLoadAction(false);
     },
   });
 
@@ -67,11 +77,16 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
 
   const checkMutation = useMutation({
     mutationFn: async ({ taskId }: { taskId: string }) => {
-      await reminderApi.check(taskId);
+      setIsLoadAction(true);
+      return await reminderApi.check(taskId);
     },
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['tasks'] }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['tasks'] });
+      setIsLoadAction(false);
+    },
     onError: (error: any) => {
       console.error('Something went wrong', error);
+      setIsLoadAction(false);
     },
   });
 
@@ -110,7 +125,6 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
         modalContext?.setIsDataLoaded(false);
         const result = await updateMutation.mutateAsync({ taskId, data });
         return result;
-        return undefined;
       } catch (error) {
         console.error('Something went wrong', error);
         throw error;
@@ -126,11 +140,20 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
     [checkMutation]
   );
 
+  useFocusEffect(
+    useCallback(() => {
+      refetch();  // This will trigger the API call every time the screen is focused
+    }, [refetch])
+  );
+
   useEffect(() => {
     if (taskData && taskData.data) {
       setTask(taskData.data);
     }
   }, [taskData]);
+  useEffect(() => {
+    console.log("isLoading", isLoading);
+  }, [isLoading]);
 
   const valueContext: TaskContextProps = {
     task,
@@ -140,8 +163,9 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
     handleUpdateTask,
     handleCheckTask,
     loading: isLoading,
+    isLoadAction
   };
-  
+
   return <TaskContext.Provider value={valueContext}>{children}</TaskContext.Provider>;
 };
 

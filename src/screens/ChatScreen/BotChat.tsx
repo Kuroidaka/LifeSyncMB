@@ -260,10 +260,10 @@ const FunctionData = ({ agent }: { agent: FunctionAgentType }) => {
             "RoutineCreateChatService": RoutineCard,
             // Add more mappings here if necessary
         };
-
+        
         const CardComponent = cardComponents[agent.name];
         if (!CardComponent) return null;
-
+        
         return (
             <View style={styles.funcDataBox}>
                 {listFuncData && listFuncData.length > 0 && listFuncData.map((funcData: any) => (

@@ -9,7 +9,7 @@ import React, {
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { WebSocketContext, WebSocketProvider } from './socket.context';
 import conversationApi from '../api/conversation.api';
-import { useNavigation, useRoute } from '@react-navigation/native';
+import { useFocusEffect, useNavigation, useRoute } from '@react-navigation/native';
 import { ToastAndroid } from 'react-native';
 import Routes from '../navigation/Routes';
 import { Conversation, ConversationModify } from '../types/conversation.type';
@@ -55,7 +55,7 @@ export const ConversationProvider: React.FC<{ children: React.ReactNode }> = ({ 
     const [selectedConID, setSelectedConID] = useState<string | undefined>(undefined);
     const queryClient = useQueryClient();
 
-    const { data: conversationList, error, isLoading } = useQuery({
+    const { data: conversationList, error, isLoading, refetch: refetchConversation } = useQuery({
         queryKey: ['conversations'],
         queryFn: () => conversationApi.getConversationHistory(),
     });
@@ -64,6 +64,7 @@ export const ConversationProvider: React.FC<{ children: React.ReactNode }> = ({ 
         data: currentConData,
         isLoading: currentConLoading,
         error: currenConError,
+        refetch: refetchCurrentCon,
     } = useQuery({
         queryKey: ['conversation', selectedConID],
         queryFn: () => (selectedConID ? conversationApi.getConversationHistory(selectedConID) : null),
@@ -78,6 +79,19 @@ export const ConversationProvider: React.FC<{ children: React.ReactNode }> = ({ 
         }
         return [...list, newData];
     };
+
+    useFocusEffect(
+        useCallback(() => {
+            refetchConversation();
+        }, [refetchConversation])
+    );
+    useFocusEffect(
+        useCallback(() => {
+            if(selectedConID) {
+                refetchCurrentCon();
+            }
+        }, [refetchCurrentCon, selectedConID])
+    );
 
     useEffect(() => {
         const data = conversationList?.data;
@@ -154,6 +168,7 @@ export const ConversationProvider: React.FC<{ children: React.ReactNode }> = ({ 
             }
         };
     }, [socketContext?.socket]);
+
 
     const cacheConversation: CacheConversation = {
         del: async (id: string) => {

@@ -5,6 +5,7 @@ import { isObject } from '../utils';
 import { AxiosResponse } from '../types/index.type';
 import { Routine, createRoutineType, updateRoutineType } from '../types/routine.type';
 import Toast from 'react-native-toast-message';
+import { useFocusEffect } from '@react-navigation/native';
 
 export interface RoutineContextProps {
   routine: Routine[];
@@ -26,7 +27,7 @@ export const RoutineProvider: React.FC<RoutineProviderProps> = ({ children }) =>
   const [routine, setRoutine] = useState<Routine[]>([]);
   const queryClient = useQueryClient();
 
-  const { data: routineData, isLoading } = useQuery({
+  const { data: routineData, isLoading, refetch } = useQuery({
     queryKey: ['routines'],
     queryFn: () => routineApi.getRoutines()
   });
@@ -112,6 +113,12 @@ export const RoutineProvider: React.FC<RoutineProviderProps> = ({ children }) =>
       console.log(error);
     }
   };
+
+  useFocusEffect(
+    useCallback(() => {
+      refetch();  // This will trigger the API call every time the screen is focused
+    }, [refetch])
+  );
 
   useEffect(() => {
     if (routineData && routineData.data) {

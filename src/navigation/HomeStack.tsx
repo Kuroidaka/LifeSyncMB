@@ -56,7 +56,7 @@ export default function HomeStack({ navigation }: { navigation: NativeStackNavig
 
               return (
                 <TouchableOpacity onPress={handleCall} style={{ marginRight: 15 }}>
-                  <Ionicons name="videocam-outline" size={30} color="black" />
+                  {/* <Ionicons name="videocam-outline" size={30} color="black" /> */}
                 </TouchableOpacity>
               );
             },
