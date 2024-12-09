@@ -10,7 +10,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { RootStackParamList } from '../screens/type';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import ChatHeader from './Header/ChatHeader';
-import VideoCallScreen from '../screens/VideoCall/VideoCallScreen';
+// import VideoCallScreen from '../screens/VideoCall/VideoCallScreen';
 
 const Stack = createStackNavigator();
 
@@ -64,7 +64,7 @@ export default function HomeStack({ navigation }: { navigation: NativeStackNavig
         />
 
         {/* Stack for video Call */}
-        <Stack.Screen name='VideoCall' component={VideoCallScreen as any} />
+        {/* <Stack.Screen name='VideoCall' component={VideoCallScreen as any} /> */}
       </Stack.Group>
     </Stack.Navigator>
   );

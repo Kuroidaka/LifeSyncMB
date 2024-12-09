@@ -59,7 +59,7 @@ const TaskCardList: React.FC<TaskCardListProps> = ({ dataSection, dateZone, setD
             const overDueTasks = dataSection.filter((task: Task) => {
                 if (task.deadline) {
                     const deadline = new Date(task.deadline);
-                    return convertDates([deadline])[0] < convertDates([today])[0];
+                    return deadline < today;
                 }
             });
 

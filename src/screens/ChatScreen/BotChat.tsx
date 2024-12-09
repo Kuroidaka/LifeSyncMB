@@ -239,8 +239,11 @@ const FunctionData = ({ agent }: { agent: FunctionAgentType }) => {
         const processFunctionListType = () => {
             try {
                 let data = typeof agent.data === 'string' ? JSON.parse(agent.data) : agent.data;
-                // setListFuncData(Array.isArray(data) ? data : data ? [data] : []);
+                data = Array.isArray(data) ? data : data ? [data] : []
+                console.log("data", data)
                 setListFuncData(data);
+                // console.log("data", data)
+                // setListFuncData(data);
             } catch (error) {
                 console.error('Failed to parse agent data:', error);
                 setListFuncData([]);

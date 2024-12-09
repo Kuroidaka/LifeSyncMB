@@ -17,4 +17,4 @@ export type LoginScreenProps = NativeStackScreenProps<RootStackParamList, 'Auth'
 export type SettingScreenProps = NativeStackScreenProps<RootStackParamList, 'Setting'>;
 export type ChatListScreenProps = NativeStackScreenProps<RootStackParamList, 'Chat'>;
 export type ChatScreenProps = NativeStackScreenProps<RootStackParamList, 'ChatID'>;
-export type VideoCallScreenProps = NativeStackScreenProps<RootStackParamList, 'VideoCall'>;
+// export type VideoCallScreenProps = NativeStackScreenProps<RootStackParamList, 'VideoCall'>;

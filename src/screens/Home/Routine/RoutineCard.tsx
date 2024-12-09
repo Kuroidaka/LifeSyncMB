@@ -59,8 +59,9 @@ export const Card: React.FC<RoutineCardProps> = ({ data, mode = 'edit', dataSect
           ]
         );
       },
-      delete: (id: string) => {
-        setTimeout(() => {
+      delete: async (id: string) => {
+        await routineContext?.handleDeleteRoutine(id)
+        setTimeout(async () => {
           const newTask = [...dataSection].filter(data => data.id !== id);
           setDateSection(newTask);
           taskHandle.option.close();

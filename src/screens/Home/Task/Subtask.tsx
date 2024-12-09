@@ -53,14 +53,14 @@ const SubTask: React.FC<SubTaskProps> = (props) => {
 
   const closeEdit = () => {
     setEdit(false);
-    updateSubTitle(id, value);
   };
 
   const handleInput = (text: string) => {
     setValue(text);
   };
 
-  const handleSubmitEditing = () => {
+  const handleSubmitEditing = async () => {
+    await updateSubTitle(id, value);
     closeEdit();
   };
 

@@ -8,13 +8,16 @@ import { TaskProvider } from "../context/task.context";
 import { ModalProvider } from "../context/modal.context";
 import { AppearanceProvider } from "../context/appearance.context";
 import { WebSocketProvider } from "../context/socket.context";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 
 export default function Providers() {
   return (
-    <NavigationContainer>
-      <AuthProvider>
-        <Routes />
-      </AuthProvider>
-    </NavigationContainer>
+    <SafeAreaProvider>
+      <NavigationContainer>
+        <AuthProvider>
+          <Routes />
+        </AuthProvider>
+      </NavigationContainer>
+    </SafeAreaProvider> 
   );
 }
